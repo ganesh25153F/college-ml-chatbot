@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🤖 NECG ML CHATBOT</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            height: 100vh;
+        }
+        .container { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        /* SMALL HEADER */
+        .header { 
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            color: #ffffff; 
+            padding: 15px 20px; /* ← SMALLER */
+            text-align: center; 
+            box-shadow: 0 5px 20px rgba(30, 58, 138, 0.4);
+            border-bottom: 2px solid #3b82f6;
+        }
+        .header h1 { font-size: 2em; margin-bottom: 5px; /* ← SMALLER */
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 🐛 SMALLER PORTALS SECTION */
+        .portals { 
+            background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+            padding: 12px 15px; /* ← MUCH SMALLER */
+            margin: 10px 20px 5px; /* ← TIGHTER */
+            border-radius: 12px; 
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+            border: 1px solid #0d9488;
+        }
+        .portals h3 { 
+            color: #ffffff; 
+            margin-bottom: 12px; /* ← SMALLER */
+            text-align: center; 
+            font-size: 1.1em; /* ← SMALLER */
+        }
+        .portal-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* ← SMALLER BUTTONS */
+            gap: 10px; 
+        }
+        .portal-btn { 
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+            color: #ffffff; 
+            border: none; 
+            padding: 10px 15px; /* ← SMALLER */
+            border-radius: 10px;
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.95em; /* ← SMALLER */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+            border: 1px solid #3b82f6;
+        }
+        .portal-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.5);
+        }
+        
+        /* 🚀 MEGA CHATBOX - TAKES 75% OF SCREEN */
+        .chatbox { 
+            flex: 4; /* 🎯 HUGE - 75% screen height */
+            background: rgba(15, 23, 42, 0.98); 
+            overflow-y: auto; 
+            padding: 25px; 
+            margin: 5px 20px; /* ← TIGHTER MARGINS */
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+            border: 1px solid #1e293b;
+        }
+        
+        /* BIG MESSAGES */
+        .message { 
+            margin: 15px 0; 
+            padding: 20px 25px; 
+            border-radius: 22px; 
+            max-width: 85%; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            word-wrap: break-word;
+            animation: fadeIn 0.4s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .user { 
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            color: #ffffff; 
+            margin-left: auto; 
+            border-bottom-right-radius: 12px;
+        }
+        .bot { 
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: #e2e8f0; 
+            border: 1px solid #475569;
+            border-bottom-left-radius: 12px;
+        }
+        
+        /* 🐛 SMALLER INPUT AREA */
+        .input-area { 
+            display: flex; 
+            padding: 12px 20px; /* ← MUCH SMALLER */
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            gap: 12px; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+            border-top: 1px solid #334155;
+        }
+        #messageInput { 
+            flex: 1; 
+            padding: 12px 20px; /* ← SMALLER */
+            height: 45px; /* ← SMALLER HEIGHT */
+            border: 2px solid #475569; 
+            border-radius: 25px; 
+            font-size: 15px; /* ← SMALLER */
+            outline: none;
+            background: rgba(255,255,255,0.05);
+            color: #e2e8f0;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        #messageInput:focus { 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            background: rgba(255,255,255,0.1);
+        }
+        #messageInput::placeholder { color: #94a3b8; }
+        
+        /* SMALLER SEND BUTTON */
+        button { 
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white; 
+            border: none; 
+            padding: 12px 25px; /* ← SMALLER */
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 15px; /* ← SMALLER */
+            height: 45px; /* ← MATCH INPUT */
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(5, 150, 105, 0.4);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(5, 150, 105, 0.6); }
+        
+        /* SMALLER QUICK BUTTONS */
+        .quick-buttons { 
+            display: flex; 
+            gap: 10px; 
+            padding: 12px 18px; /* ← SMALLER */
+            background: rgba(30, 58, 138, 0.25);
+            flex-wrap: wrap; 
+            border-radius: 15px; 
+            margin: 8px 20px 8px; /* ← TIGHTER */
+            border: 1px solid #1e40af;
+            backdrop-filter: blur(10px);
+        }
+        .quick-btn { 
+            background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+            color: white; 
+            border: none; 
+            padding: 8px 18px; /* ← SMALLER */
+            border-radius: 20px; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 14px; /* ← SMALLER */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+        .quick-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5); }
+        
+        .ml-badge {
+            position: absolute; top: 8px; right: 15px;
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white; padding: 6px 12px; border-radius: 20px; 
+            font-size: 0.85em; font-weight: 600;
+            box-shadow: 0 3px 12px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 3px 12px rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 3px 18px rgba(16, 185, 129, 0.7); }
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ml-badge">🤖 ML Powered</div>
+        
+        <div class="header">
+            <h1>🤖 NECG ML CHATBOT</h1>
+            <p>AI Faculty & Portal Assistant</p>
+        </div>
+        
+        <div class="portals">
+            <h3>🔗 Quick Portals</h3>
+            <div class="portal-grid">
+                <button class="portal-btn" onclick="openPortal('results')">📊 Results</button>
+                <button class="portal-btn" onclick="openPortal('attendance')">👤 Attendance</button>
+                <button class="portal-btn" onclick="openPortal('fees')">💳 Fees</button>
+                <button class="portal-btn" onclick="openPortal('admissions')">🎓 Admissions</button>
+            </div>
+        </div>
+        
+        <div id="chatbox" class="chatbox"></div>
+        
+        <div class="quick-buttons">
+            <button class="quick-btn" onclick="quickMsg('cse faculty')">🎓 CSE</button>
+            <button class="quick-btn" onclick="quickMsg('ece faculty')">📡 ECE</button>
+            <button class="quick-btn" onclick="quickMsg('mca faculty')">💻 MCA</button>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="💡 'cse faculty' | 'python' | 'results'..." 
+                   onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const PORTAL_LINKS = {{ portal_links|tojson|safe }};
+        const CSE_FACULTY = {{ cse_faculty|tojson|safe }};
+        const ECE_FACULTY = {{ ece_faculty|tojson|safe }};
+        const MCA_FACULTY = {{ mca_faculty|tojson|safe }};
+        const ALL_FACULTY = {{ all_faculty|tojson|safe }};
+
+        window.onload = function() {
+            addMessage('🤖 **NECG ML Chatbot Ready!**<br>💬 Type: "cse faculty" | "python" | "results"', false);
+        };
+
+        function addMessage(text, isUser) {
+            const chatbox = document.getElementById('chatbox');
+            const msg = document.createElement('div');
+            msg.className = `message ${isUser ? 'user' : 'bot'}`;
+            msg.innerHTML = text.replace(/\\\\n/g, '<br>');
+            chatbox.appendChild(msg);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function showTyping() { addMessage('⚡ ML Processing...', false); }
+        function clearTyping() {
+            const messages = document.querySelectorAll('.message.bot');
+            const lastMsg = messages[messages.length - 1];
+            if (lastMsg && lastMsg.innerHTML.includes('Processing')) lastMsg.remove();
+        }
+
+        function openPortal(type) {
+            window.open(PORTAL_LINKS[type], '_blank');
+            addMessage(`✅ **Opened ${type.toUpperCase()} Portal!** 🚀`, false);
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            addMessage(message, true);
+            input.value = '';
+            showTyping();
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: message})
+                });
+                const data = await response.json();
+                
+                clearTyping();
+                addMessage(data.response, false);
+                
+                if (data.action === 'show_cse') sendFacultyList(CSE_FACULTY, 'CSE');
+                else if (data.action === 'show_ece') sendFacultyList(ECE_FACULTY, 'ECE');
+                else if (data.action === 'show_mca') sendFacultyList(MCA_FACULTY, 'MCA');
+                else if (data.action === 'show_all') sendFacultyList(ALL_FACULTY, 'ALL');
+                
+            } catch (error) {
+                clearTyping();
+                addMessage('❌ Connection error! Try again.', false);
+            }
+        }
+
+        function sendFacultyList(facultyList, dept) {
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < facultyList.length) {
+                    addMessage(facultyList[i], false);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    addMessage(`✅ **End of ${dept} Faculty!** 👨‍🏫✨`, false);
+                }
+            }, 1000);
+        }
+
+        function quickMsg(msg) {
+            document.getElementById('messageInput').value = msg;
+            sendMessage();
+        }
+    </script>
+</body>
+</html>
